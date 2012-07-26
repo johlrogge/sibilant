@@ -1,0 +1,21 @@
+(include "../include/macros.sibilant")  
+
+(defmacro module (dependencies &rest body)
+  (defvar kvs (rest dependencies)
+	  ks (bulk-map kvs (lambda (k v) (translate k)))
+	  vs (bulk-map kvs (lambda (k v) (translate v))))
+  (concat "define([" (join ", " vs) "], function(" (join ", " ks) ") {\n"
+							 (indent (macros.progn body))
+							 "});"))
+
+(module {a: "path/to/a", b:"path/to/b"} (console.log "hepp"))
+
+
+
+
+  
+
+
+
+		
+  

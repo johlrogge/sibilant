@@ -1,0 +1,10 @@
+#!/usr/bin/env sibilant -x
+(include "./testHelper.sibilant")
+
+(sibilant.include "sibilant/include/amd")
+
+(assert-translation "(module {a \"path/to/a\" b \"path/to/b\"} body)"
+		    "define([\"path/to/a\", \"path/to/b\"], function(a, b) {
+
+  return body();
+});")
