@@ -1,0 +1,3 @@
+[submodule "ext/curl"]
+	path = ext/curl
+	url = git://github.com/cujojs/curl.git

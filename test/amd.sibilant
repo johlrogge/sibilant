@@ -4,15 +4,13 @@
 (sibilant.include "sibilant/include/amd")
 
 (assert-translation "(module {a \"path/to/a\" b \"path/to/b\"} body)"
-		    "define([\"path/to/a\", \"path/to/b\"], function(a, b) {
-  return (function() {
-    return body();
-  })()
-});")
+		    "define([\"path/to/a\", \"path/to/b\"], function(a, b) {return body;});")
+
+(assert-translation "(module {b \"p/t/b\"} {f: 'hepp})"
+		    "define([\"p/t/b\"], function(b) {return { f: \"hepp\" };});")
 
 (assert-translation "(plugin-load body)"
-		    "function(name, require, load, config) {
-  return (function() {
-    return body();
-  })()
-}")
+		    "function(name, require, load, config) {return body;}")
+
+(assert-translation "(module {} {load: (plugin-load body)})"
+		    "define([], function() {return { load: function(name, require, load, config) {return body;} };});")
