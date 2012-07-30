@@ -6,9 +6,14 @@
 (set window 'sibilant sibilant)
 
 (defvar exports {})
-;;(include "../include/functional")
+(include "../include/functional")
 ;;(include "../src/core")
 
 (module {core: "js!sibilant/core!exports=sibilant"}
+
 	{load: (plugin-load
-		(console.log "loading " name))})
+		(console.log "loading " name)
+		(console.dir core)
+		(defvar test (core.translate-all "(console.log \"rock on!!!\")"))
+		(console.log test)
+		(load (lambda () (eval test))))})

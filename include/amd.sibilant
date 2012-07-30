@@ -17,8 +17,9 @@
   (defvar last-index (-math.max 0 (- body.length 1)))
   (set body last-index ['return (get body last-index)])
   (concat "function(name, require, load, config) {"
-	  (map body (lambda (arg)
-		      (concat (translate arg) ";")))
+	  (join "\n"
+		(map body (lambda (arg)
+		      (concat (translate arg) ";"))))
 	  "}"))
 
 
