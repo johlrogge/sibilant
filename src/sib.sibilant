@@ -1,0 +1,5 @@
+(include "../include/amd.sibilant")
+
+(module {core: "sibilant/core"}
+	{load: (plugin-load
+		(console.log "loading " name))})

@@ -5,6 +5,14 @@
 
 (assert-translation "(module {a \"path/to/a\" b \"path/to/b\"} body)"
 		    "define([\"path/to/a\", \"path/to/b\"], function(a, b) {
-
-  return body();
+  return (function() {
+    return body();
+  })()
 });")
+
+(assert-translation "(plugin-load body)"
+		    "function(name, require, load, config) {
+  return (function() {
+    return body();
+  })()
+}")

@@ -4,11 +4,12 @@
   (defvar kvs (rest dependencies)
 	  ks (bulk-map kvs (lambda (k v) (translate k)))
 	  vs (bulk-map kvs (lambda (k v) (translate v))))
-  (concat "define([" (join ", " vs) "], function(" (join ", " ks) ") {\n"
-							 (indent (macros.progn body))
+  (concat "define([" (join ", " vs) "], function(" (join ", " ks) ") {"
+							 (indent (macros.return (macros.scoped body)))
 							 "});"))
 
-(module {a: "path/to/a", b:"path/to/b"} (console.log "hepp"))
+(defmacro plugin-load (&rest body)
+  (concat "function(name, require, load, config) {" (indent (macros.return (macros.scoped body))) "}"))
 
 
 
