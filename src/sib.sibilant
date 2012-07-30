@@ -1,5 +1,14 @@
 (include "../include/amd.sibilant")
 
-(module {core: "sibilant/core"}
+(defvar sibilant {})
+;;(defun error (str) (throw str))
+;;(defun inspect (item) (if item.to-source (item.to-source) (item.to-string)))
+(set window 'sibilant sibilant)
+
+(defvar exports {})
+;;(include "../include/functional")
+;;(include "../src/core")
+
+(module {core: "js!sibilant/core!exports=sibilant"}
 	{load: (plugin-load
 		(console.log "loading " name))})
