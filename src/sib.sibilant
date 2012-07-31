@@ -1,19 +1,40 @@
-(include "../include/amd.sibilant")
-
 (defvar sibilant {})
-;;(defun error (str) (throw str))
-;;(defun inspect (item) (if item.to-source (item.to-source) (item.to-string)))
+
+(defun error (str) (throw str))
+(defun inspect (item) (if item.to-source (item.to-source) (item.to-string)))
 (set window 'sibilant sibilant)
 
 (defvar exports {})
-(include "../include/functional")
-;;(include "../src/core")
 
-(module {core: "js!sibilant/core!exports=sibilant"}
+
+(include "../include/functional.sibilant")
+(include "../include/amd.sibilant")
+
+(console.log sibilant.macros)
+
+(module { text: "text"
+	  core: "js!sibilant/core!exports=sibilant"
+	  amd:  "text!include/amd.sibilant"
+	  macros: "text!include/macros.sibilant"
+	  priv: "curl/_privileged"}
+	(console.log (concat name "loading..."))
 
 	{load: (plugin-load
-		(console.log "loading " name)
-		(console.dir core)
-		(defvar test (core.translate-all "(console.log \"rock on!!!\")"))
-		(console.log test)
-		(load (lambda () (eval test))))})
+		(console.dir load)
+		(text.load (concat name ".sibilant")
+			   require
+			   (lambda (unit)
+			     (defvar test (core.translate-all (join "\n" (list macros amd unit))))
+			     (console.log test)
+			     
+			     (console.dir priv)
+			     (eval test)
+			     (console.dir (get priv.cache (concat "sib!" name)))
+		             (load (get priv.cache (concat "sib!" name))))
+
+			   config)
+					
+)})			   
+
+
+		

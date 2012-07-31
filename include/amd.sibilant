@@ -1,5 +1,3 @@
-(include "../include/macros.sibilant")  
-
 (defmacro module (dependencies &rest body)
   (defvar kvs (rest dependencies)
 	  ks (bulk-map kvs (lambda (k v) (translate k)))
