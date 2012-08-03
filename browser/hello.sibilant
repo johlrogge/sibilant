@@ -1,4 +1,3 @@
 (module {}
-	(console.log "module loaded")
 	(lambda (subject)
 	  (console.log (concat "Hello " subject))))

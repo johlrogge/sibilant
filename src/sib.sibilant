@@ -10,31 +10,68 @@
 (include "../include/functional.sibilant")
 (include "../include/amd.sibilant")
 
-(console.log sibilant.macros)
+(call
+ (lambda (global-eval)
+   (module { core: "js!sibilant/core!exports=sibilant"
+	     amd:  "text!include/amd.sibilant"
+	     macros: "text!include/macros.sibilant"}
 
-(module { text: "text"
-	  core: "js!sibilant/core!exports=sibilant"
-	  amd:  "text!include/amd.sibilant"
-	  macros: "text!include/macros.sibilant"
-	  priv: "curl/_privileged"}
-	(console.log (concat name "loading..."))
-
-	{load: (plugin-load
-		(console.dir load)
-		(text.load (concat name ".sibilant")
-			   require
-			   (lambda (unit)
-			     (defvar test (core.translate-all (join "\n" (list macros amd unit))))
-			     (console.log test)
-			     
-			     (console.dir priv)
-			     (eval test)
-			     (console.dir (get priv.cache (concat "sib!" name)))
-		             (load (get priv.cache (concat "sib!" name))))
-
-			   config)
-					
-)})			   
+	   (defmacro in (lst el)
+	     (join " "
+		   (list "("
+			 (translate el)
+			 'in
+			 (translate lst)
+			 ")")))
 
 
-		
+	   (defvar head (and document (or (get document 'head) (get (send document get-elements-by-tag-name 'head) 0))))
+	   
+	   (defvar inject-source (lambda (el source)
+				   (setf inject-source (if (in el 'text) 
+							 (lambda (el, source) (setf el.text source))
+							 (lambda (el, source) (send el append-child
+										    (send document create-text-node source)))))
+				   (inject-source el source)))
+
+
+	   (defun inject-script (source) 
+	     (defvar el (send document create-element 'script))
+	     (inject-source el source)
+	     (setf el.charset "utf-8")
+	     (send head insert-before el head.first-child))
+
+
+	   (defun wrap-define (name body)
+	     (defvar res
+		     (join "\n"
+			   (list "(function () {"
+				 "  var prevdef = window.define;"
+				 (concat "  var define = function(){prevdef('" (translate name) "', arguments[0], arguments[1])};")
+				 (translate body)
+				 "})()")))
+	     res)
+	   
+	   (defun named-module (name &rest units)
+	     (wrap-define name
+			  (core.translate-all (join "\n"
+						    units))))
+			 
+
+	   
+	   {load: (plugin-load
+		   (require [(concat "text!" name ".sibilant")]
+			    (lambda (unit)
+			      (defvar test
+				      (named-module name
+						    macros
+						    amd
+						    unit))
+
+			      (defvar resource-id name)
+			      (inject-script test)
+			      (load (require name)))))}))
+(lambda (x) (eval x)))
+
+
+ 
